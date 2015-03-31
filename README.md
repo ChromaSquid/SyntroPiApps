@@ -6,6 +6,10 @@ Check out www.richards-tech.com for more details.
 
 ### Release history
 
+#### March 31 2015 - 1.0.3
+
+Upgraded SyntroPiNav to work with latest RTIMULib (6.1.0).
+
 #### November 13 2014 - 1.0.2
 
 Updated SyntroPiCamGS to reduce latency.

@@ -22,7 +22,6 @@
 #include "NavClient.h"
 
 #include "IMUThread.h"
-#include "RTIMUMPU9150.h"
 
 #include <termios.h>
 #include <unistd.h>
@@ -33,23 +32,23 @@
 volatile bool SyntroPiNavConsole::sigIntReceived = false;
 
 SyntroPiNavConsole::SyntroPiNavConsole(bool daemonMode, QObject *parent)
-	: QThread(parent)
+    : QThread(parent)
 {
-	m_daemonMode = daemonMode;
+    m_daemonMode = daemonMode;
 
     m_rateTimer = 0;
-	m_client = NULL;
+    m_client = NULL;
 
-	if (m_daemonMode) {
-		registerSigHandler();
-		
-		if (daemon(1, 1)) {
-			perror("daemon");
-			return;
-		}
-	}
+    if (m_daemonMode) {
+        registerSigHandler();
 
-	connect((QCoreApplication *)parent, SIGNAL(aboutToQuit()), this, SLOT(aboutToQuit()));
+        if (daemon(1, 1)) {
+            perror("daemon");
+            return;
+        }
+    }
+
+    connect((QCoreApplication *)parent, SIGNAL(aboutToQuit()), this, SLOT(aboutToQuit()));
 
     SyntroUtils::syntroAppInit();
 
@@ -61,13 +60,13 @@ SyntroPiNavConsole::SyntroPiNavConsole(bool daemonMode, QObject *parent)
     connect(m_imuThread, SIGNAL(newIMUData(const RTIMU_DATA&)),
             m_client, SLOT(newIMUData(const RTIMU_DATA&)), Qt::DirectConnection);
 
-	m_client->resumeThread();
+    m_client->resumeThread();
 
     if (!m_daemonMode) {
         m_rateTimer = startTimer(RATE_TIMER_INTERVAL * 1000);
     }
 
-	start();
+    start();
 }
 
 void SyntroPiNavConsole::aboutToQuit()
@@ -78,12 +77,12 @@ void SyntroPiNavConsole::aboutToQuit()
     }
 
     for (int i = 0; i < 2; i++) {
-		if (wait(1000))
-			break;
+        if (wait(1000))
+            break;
 
-		if (!m_daemonMode)
-			printf("Waiting for console thread to finish...\n");
-	}
+        if (!m_daemonMode)
+            printf("Waiting for console thread to finish...\n");
+    }
 }
 
 void SyntroPiNavConsole::timerEvent(QTimerEvent *)
@@ -92,80 +91,80 @@ void SyntroPiNavConsole::timerEvent(QTimerEvent *)
 
 void SyntroPiNavConsole::showHelp()
 {
-	printf("\nOptions are:\n\n");
-	printf("  h - Show help\n");
-	printf("  s - Show status\n");
-	printf("  x - Exit\n");
+    printf("\nOptions are:\n\n");
+    printf("  h - Show help\n");
+    printf("  s - Show status\n");
+    printf("  x - Exit\n");
 }
 
 void SyntroPiNavConsole::showStatus()
-{    
-	printf("\nStatus: %s\n", qPrintable(m_client->getLinkState()));
+{
+    printf("\nStatus: %s\n", qPrintable(m_client->getLinkState()));
 
 }
 
 void SyntroPiNavConsole::run()
 {
-	if (m_daemonMode)
-		runDaemon();
-	else
-		runConsole();
+    if (m_daemonMode)
+        runDaemon();
+    else
+        runConsole();
 
     m_imuThread->exitThread();
     m_client->exitThread();
     SyntroUtils::syntroAppExit();
-	QCoreApplication::exit();
+    QCoreApplication::exit();
 }
 
 void SyntroPiNavConsole::runConsole()
 {
-	struct termios	ctty;
+    struct termios	ctty;
 
-	tcgetattr(fileno(stdout), &ctty);
-	ctty.c_lflag &= ~(ICANON);
-	tcsetattr(fileno(stdout), TCSANOW, &ctty);
+    tcgetattr(fileno(stdout), &ctty);
+    ctty.c_lflag &= ~(ICANON);
+    tcsetattr(fileno(stdout), TCSANOW, &ctty);
 
     bool running = true;
 
     while (running) {
-		printf("\nEnter option: ");
+        printf("\nEnter option: ");
 
-        switch (tolower(getchar()))	
-		{
-		case 'h':
-			showHelp();
-			break;
+        switch (tolower(getchar()))
+        {
+        case 'h':
+            showHelp();
+            break;
 
-		case 's':
-			showStatus();
-			break;
+        case 's':
+            showStatus();
+            break;
 
-		case 'x':
-			printf("\nExiting\n");
+        case 'x':
+            printf("\nExiting\n");
             running = false;
-			break;
+            break;
 
-		case '\n':
-			continue;
-		}
-	}
+        case '\n':
+            continue;
+        }
+    }
 }
 
 void SyntroPiNavConsole::runDaemon()
 {
     while (!SyntroPiNavConsole::sigIntReceived)
-		msleep(100); 
+        msleep(100);
 }
 
 void SyntroPiNavConsole::registerSigHandler()
 {
-	struct sigaction sia;
+    struct sigaction sia;
 
-	bzero(&sia, sizeof sia);
+    bzero(&sia, sizeof sia);
     sia.sa_handler = SyntroPiNavConsole::sigHandler;
 
-	if (sigaction(SIGINT, &sia, NULL) < 0)
-		perror("sigaction(SIGINT)");
+    if (sigaction(SIGINT, &sia, NULL) < 0)
+        perror("sigaction(SIGINT)");
 }
 
 void SyntroPiNavConsole::sigHandler(int)

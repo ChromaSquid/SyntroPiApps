@@ -29,7 +29,7 @@
 #include "SelectIMUDlg.h"
 #include "SelectFusionDlg.h"
 #include "IMUThread.h"
-#include "RTIMU.h"
+#include "IMUDrivers/RTIMU.h"
 #include "AccelCalDlg.h"
 #include "MagCalDlg.h"
 

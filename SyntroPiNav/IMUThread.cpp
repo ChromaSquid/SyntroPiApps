@@ -20,7 +20,7 @@
 #include "IMUThread.h"
 #include "RTIMUSettings.h"
 #include "RTFusion.h"
-#include "RTIMU.h"
+#include "IMUDrivers/RTIMU.h"
 
 #include "SyntroPiNav.h"
 
