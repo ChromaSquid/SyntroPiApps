@@ -19,11 +19,11 @@
 
 #include "SelectIMUDlg.h"
 #include "RTIMUSettings.h"
-#include "RTIMUMPU9150.h"
-#include "RTIMUMPU9250.h"
-#include "RTIMUGD20HM303D.h"
-#include "RTIMUGD20M303DLHC.h"
-#include "RTIMULSM9DS0.h"
+#include "IMUDrivers/RTIMUMPU9150.h"
+#include "IMUDrivers/RTIMUMPU9250.h"
+#include "IMUDrivers/RTIMUGD20HM303D.h"
+#include "IMUDrivers/RTIMUGD20M303DLHC.h"
+#include "IMUDrivers/RTIMULSM9DS0.h"
 
 #include <QFormLayout>
 #include <QLabel>
